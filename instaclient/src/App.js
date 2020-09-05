@@ -14,7 +14,10 @@ function App() {
 
       <h1>hello</h1>
 
+      <Post username="jade" caption="here I am" imageUrl="./me3.png"/>
       <Post/>
+      <Post/>
+
     </div>
   );
 }
