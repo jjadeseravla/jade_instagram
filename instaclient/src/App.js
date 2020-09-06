@@ -25,7 +25,10 @@ function App() {
 //snapshot is a powerful listeneer.  everytime documents gets modified/changed in posts, snapshot is taken.  everty time new post is added
   useEffect(() => {
     db.collection('posts').onSnapshot(snapshot => {
-      setPosts(snapshot.docs.map(doc => doc.data()));
+      setPosts(snapshot.docs.map(doc => ({
+         id: doc.id,
+         post: doc.data()
+      })));
     })
   }, [])
 
@@ -39,8 +42,8 @@ function App() {
       <h1>hello</h1>
 
       {
-        posts.map(post => (
-          <Post
+        posts.map(({ id, post }) => (
+          <Post key={id}
                 username={post.username}
                 caption={post.caption}
                 imageUrl={post.imageUrl}
