@@ -114,6 +114,7 @@ function App() {
           <input placeholder="password" type="text" value={password} onChange={(e) => setPassword(e.target.value)} />
 
           <Button onClick={signUp}>Sign Up</Button>
+
         </form>
       </div>
     </Modal>
@@ -122,7 +123,11 @@ function App() {
         <img src={logo} className="app__headerImage" alt="logo"/>
       </div>
 
-      <Button type="submit" onClick={() => setOpen(true)}>Sign Up</Button>
+      {user ? (
+        <Button type="submit" onClick={() => auth.signOut()}>Log out</Button>
+      ): (
+        <Button type="submit" onClick={() => setOpen(true)}>Sign Up</Button>
+      )}
 
       <h1>hello</h1>
 
