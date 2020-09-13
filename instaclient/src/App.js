@@ -4,7 +4,7 @@ import logo from './insta.png';
 import './App.css';
 import Post from './Post';
 import imageUrl from './me3.png';
-import { db } from './firebase';
+import { db, auth } from './firebase';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import { Button, Input } from '@material-ui/core';
@@ -52,6 +52,25 @@ function App() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [user, setUser] = useState(null);
+
+  useEffect(() => { //useEffect is front end listener and unsubscribe is a back end listener
+    //listens to any authentication change, eg login or out or create a user
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        //user has logged in
+        console.log(authUser);
+        setUser(authUser); //it survives refresh cos os cookie tracking
+      } else {
+        //user has logged out
+        setUser(null);
+      }
+    })
+    //if useEffect fires again, perform some clean up actions before refire useEffect
+    return () => {
+      unsubscribe(); //so it doesnt spam cos you could press login 100 times and useEffect fired 100 times but this will only fire backend listener once
+    }
+  }, [user, username]);
 
 
   //runs  apiece of coded based ona  specific condition -> useEffect
@@ -66,9 +85,16 @@ function App() {
   }, []);
 
   const signUp = (e) => {
-
+    e.preventDefault(); //so doesnt refresh when submit form
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((authUser) => {
+        return authUser.user.updateProfile({
+          displayName: username
+        })
+      })
+      .catch((error) => alert(error.message))
   }
-
 
   return (
     <div className="App">
@@ -96,7 +122,7 @@ function App() {
         <img src={logo} className="app__headerImage" alt="logo"/>
       </div>
 
-      <Button onClick={() => setOpen(true)}>Sign Up</Button>
+      <Button type="submit" onClick={() => setOpen(true)}>Sign Up</Button>
 
       <h1>hello</h1>
 
